@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+mypy = "*"
+pylint = "*"
+flake8 = "*"
+jupyter = "*"
+ipykernel = "<5.0.0"
+
+[packages]
+numpy = "*"
+torch = "*"
+torchvision = "*"
+gym = {extras = ["atari"],version = "*"}
+python-dotenv = "*"
+
+[requires]
+python_version = "3.7"
