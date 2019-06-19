@@ -88,7 +88,7 @@ def run(args):
         print("  reward %f\n" % sum_reward)
 
         if episode % args.snapshot_freq == 0:
-            torch.save(Q.state_dict(), "results/%d.pth" % (episode + 1))
+            torch.save(Q.state_dict(), "results/%d.pth" % episode)
             print("  model saved")
 
     torch.save(Q.state_dict(), "results/model.pth")
