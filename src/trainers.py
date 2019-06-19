@@ -1,5 +1,4 @@
 import torch
-import torch.optim as optim
 import torch.nn as nn
 from torch.autograd import Variable
 
@@ -8,7 +7,7 @@ import config
 
 # utility class for training Q-Network
 class Trainer(object):
-    def __init__(self, Q, QTarget, opt, args):
+    def __init__(self, Q, QTarget, opt, gamma):
         # Q: Q-Network
         # QTarget: Target Q-Network
         # opt: optimizer

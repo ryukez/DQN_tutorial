@@ -11,7 +11,8 @@ import agents
 import trainers
 
 
-def run(args):
+# train model
+def train(args):
     # setup
     env = gym.make('Breakout-v0')
 
@@ -41,7 +42,7 @@ def run(args):
     opt = optim.Adam(Q.parameters(), lr=args.lr)
 
     agent = agents.Agent(nAction, Q)
-    trainer = trainers.Trainer(Q, QTarget, opt, args)
+    trainer = trainers.Trainer(Q, QTarget, opt, args.gamma)
 
     t = 0
     action = env.action_space.sample()
@@ -111,5 +112,5 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str)
 
     args = parser.parse_args()
-    run(args)
+    train(args)
 

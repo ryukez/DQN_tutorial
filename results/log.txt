@@ -1,0 +1,34 @@
+episode: 1
+
+  reward 1.000000
+
+  model saved
+episode: 2
+
+  reward 2.000000
+
+episode: 3
+
+  reward 0.000000
+
+episode: 4
+
+  reward 2.000000
+
+episode: 5
+
+  reward 0.000000
+
+episode: 6
+
+  reward 0.000000
+
+episode: 7
+
+  reward 0.000000
+
+episode: 8
+
+  reward 0.000000
+
+episode: 9

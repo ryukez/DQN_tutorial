@@ -40,6 +40,7 @@ class ReplayBuffer(object):
         return random.sample(self.memory, size)
 
 
+# preprocessing for frame
 def preprocess(x):
     # preprocess frame
     # x: a frame of size 210x160

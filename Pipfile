@@ -16,6 +16,7 @@ torch = "*"
 torchvision = "*"
 gym = {extras = ["atari"],version = "*"}
 python-dotenv = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"

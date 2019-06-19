@@ -1,6 +1,8 @@
 import argparse
 import time
+import re
 
+import matplotlib.pyplot as plt
 import gym
 import torch
 
@@ -10,7 +12,21 @@ import utils
 import agents
 
 
-def run(args):
+# extract rewards from log
+def show_progress(filename):
+    with open(filename, 'r') as f:
+        log = f.read()
+
+        pattern = re.compile(r'reward ([0-9.]+)')
+        itr = pattern.finditer(log)
+        rewards = [float(match.group(1)) for match in itr]
+
+    plt.plot(rewards)
+    plt.show()
+
+
+# demonstrate agent's play
+def test(args):
     # setup
     env = gym.make('Breakout-v0')
 
@@ -47,9 +63,7 @@ def run(args):
             if config.isLocal:
                 env.render()
 
-            # frame skip
-            if t % args.frame_skip == 0:
-                action = agent.getAction(state, 0.0)
+            action = agent.getAction(state, 0.0)
 
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
@@ -69,9 +83,9 @@ def run(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--episode', type=int, default=20)
-    parser.add_argument('--frame_skip', type=int, default=4)
+    parser.add_argument('--log_path', type=str, default='results/log.txt')
     parser.add_argument('--model_path', type=str, default='results/model.pth')
 
     args = parser.parse_args()
-    run(args)
-
+    show_progress(args.log_path)
+    test(args)
