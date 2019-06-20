@@ -16,7 +16,7 @@ class Trainer(object):
         self.QTarget = QTarget
         self.opt = opt
 
-        self.gamma = args.gamma
+        self.gamma = gamma
         self.lossFunc = nn.MSELoss()
 
     def update(self, batch):

@@ -1,4 +1,5 @@
 import argparse
+import time
 
 import gym
 import torch
@@ -46,6 +47,7 @@ def train(args):
 
     t = 0
     action = env.action_space.sample()
+    start_t = time.time()
 
     for episode in range(args.episode):
         print("episode: %d\n" % (episode + 1))
@@ -86,7 +88,11 @@ def train(args):
             if t % args.target_update_freq == 0:
                 QTarget.load_state_dict(Q.state_dict())
 
-        print("  reward %f\n" % sum_reward)
+        print("  reward %.1f\n" % sum_reward)
+
+        elapsed_minutes = (time.time() - start_t) / 60
+        print("  elapsed %.1f min\n" % elapsed_minutes)
+        print("  average %.2f min\n" % (elapsed_minutes / (episode + 1)))
 
         if episode % args.snapshot_freq == 0:
             torch.save(Q.state_dict(), "results/%d.pth" % episode)
