@@ -1,5 +1,6 @@
 import argparse
 import time
+import random
 
 import gym
 import torch
@@ -47,6 +48,7 @@ def train(args):
 
     t = 0
     action = env.action_space.sample()
+    initial_randomize = random.randint(0, args.initial_randomize_max)
     start_t = time.time()
 
     for episode in range(args.episode):
@@ -63,7 +65,9 @@ def train(args):
                 env.render()
 
             # frame skip
-            if t % args.frame_skip == 0:
+            if t < initial_randomize:
+                action = env.action_space.sample()
+            elif t % args.frame_skip == 0:
                 action = agent.getAction(state, args.eps)
 
             # take action and calc next state
@@ -112,6 +116,7 @@ if __name__ == '__main__':
     parser.add_argument('--target_update_freq', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=0.0003)
     parser.add_argument('--frame_skip', type=int, default=4)
+    parser.add_argument('--initial_randomize_max', type=int, default=20)
     parser.add_argument('--snapshot_freq', type=int, default=1000)
     parser.add_argument('--eps', type=float, default=0.05)
     parser.add_argument('--gamma', type=float, default=0.99)
