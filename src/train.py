@@ -68,7 +68,11 @@ def train(args):
             if t < initial_randomize:
                 action = env.action_space.sample()
             elif t % args.frame_skip == 0:
-                action = agent.getAction(state, args.eps)
+                alpha = t / args.exploration_steps
+                eps = (1 - alpha) * args.initial_eps + alpha * args.final_eps
+                eps = max(eps, args.final_eps)
+
+                action = agent.getAction(state, eps)
 
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
@@ -118,10 +122,11 @@ if __name__ == '__main__':
     parser.add_argument('--frame_skip', type=int, default=4)
     parser.add_argument('--initial_randomize_max', type=int, default=20)
     parser.add_argument('--snapshot_freq', type=int, default=1000)
-    parser.add_argument('--eps', type=float, default=0.05)
+    parser.add_argument('--initial_eps', type=float, default=1.0)
+    parser.add_argument('--final_eps', type=float, default=0.01)
+    parser.add_argument('--exploration_steps', type=float, default=1000000)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--model_path', type=str)
 
     args = parser.parse_args()
     train(args)
-
