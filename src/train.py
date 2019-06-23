@@ -62,9 +62,7 @@ def train(args):
             if config.isLocal:
                 env.render()
 
-            # frame skip
-            if t % args.frame_skip == 0:
-                action = agent.getAction(state, args.eps)
+            action = agent.getAction(state, args.eps)
 
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
@@ -111,7 +109,6 @@ if __name__ == '__main__':
     parser.add_argument('--batch', type=int, default=32)
     parser.add_argument('--target_update_freq', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=0.0003)
-    parser.add_argument('--frame_skip', type=int, default=4)
     parser.add_argument('--snapshot_freq', type=int, default=1000)
     parser.add_argument('--eps', type=float, default=0.05)
     parser.add_argument('--gamma', type=float, default=0.99)
