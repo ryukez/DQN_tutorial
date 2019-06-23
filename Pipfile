@@ -9,7 +9,6 @@ pylint = "*"
 flake8 = "*"
 jupyter = "*"
 ipykernel = "<5.0.0"
-pandoc = "*"
 
 [packages]
 numpy = "*"
