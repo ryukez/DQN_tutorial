@@ -64,10 +64,11 @@ def train(args):
             if config.isLocal:
                 env.render()
 
-            # frame skip
+            # replay start
             if t < args.replay_start:
                 action = env.action_space.sample()
-            elif t % args.frame_skip == 0:
+            # frame skip
+            elif t % args.action_repeat == 0:
                 alpha = t / args.exploration_steps
                 eps = (1 - alpha) * args.initial_eps + alpha * args.final_eps
                 eps = max(eps, args.final_eps)
@@ -123,7 +124,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch', type=int, default=32)
     parser.add_argument('--target_update_freq', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=0.00025)
-    parser.add_argument('--frame_skip', type=int, default=4)
+    parser.add_argument('--action_repeat', type=int, default=4)
     parser.add_argument('--initial_randomize_max', type=int, default=30)
     parser.add_argument('--snapshot_freq', type=int, default=1000)
     parser.add_argument('--initial_eps', type=float, default=1.0)
