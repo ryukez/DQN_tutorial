@@ -12,7 +12,7 @@ ipykernel = "<5.0.0"
 
 [packages]
 numpy = "*"
-torch = "*"
+torch = "==1.1.0"
 torchvision = "*"
 gym = {extras = ["atari"],version = "*"}
 python-dotenv = "*"
