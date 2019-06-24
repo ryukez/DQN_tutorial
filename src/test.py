@@ -13,16 +13,17 @@ import agents
 
 
 # extract rewards from log
-def show_progress(filename):
+def plot_progress(filename, label):
+    N = 1000 # average num
     with open(filename, 'r') as f:
         log = f.read()
 
         pattern = re.compile(r'reward ([0-9.]+)')
         itr = pattern.finditer(log)
         rewards = [float(match.group(1)) for match in itr]
+        averaged = [sum(rewards[i : i + N]) / N for i in range(len(rewards) - N)]
 
-    plt.plot(rewards)
-    plt.show()
+    plt.plot(averaged, label=label)
 
 
 # demonstrate agent's play
@@ -73,7 +74,7 @@ def test(args):
             sum_reward += reward
             t += 1
 
-            time.sleep(0.01)
+            time.sleep(0.03)
 
         print("  reward %f\n" % sum_reward)
 
@@ -87,5 +88,13 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str, default='results/model.pth')
 
     args = parser.parse_args()
-    show_progress(args.log_path)
+
+    # plotting
+    plot_progress(args.log_path, '')
+
+    plt.title('Training progress')
+    plt.xlabel('episode')
+    plt.ylabel('average reward (recent 100 samples)')
+    plt.show()
+
     test(args)

@@ -47,8 +47,7 @@ def train(args):
     trainer = trainers.Trainer(Q, QTarget, opt, args.gamma)
 
     t = 0
-    action = env.action_space.sample()
-    initial_randomize = random.randint(0, args.initial_randomize_max)
+    action = 0  # no op
     start_t = time.time()
 
     for episode in range(args.episode):
@@ -57,6 +56,7 @@ def train(args):
         observation = env.reset()
         state = torch.cat([utils.preprocess(observation)] * 4, 1)  # initial state
         sum_reward = 0
+        initial_randomize = random.randint(0, args.initial_randomize_max)
 
         # Exploration loop
         done = False
@@ -65,14 +65,17 @@ def train(args):
                 env.render()
 
             # frame skip
-            if t < initial_randomize:
-                action = env.action_space.sample()
-            elif t % args.frame_skip == 0:
-                alpha = t / args.exploration_steps
-                eps = (1 - alpha) * args.initial_eps + alpha * args.final_eps
-                eps = max(eps, args.final_eps)
+            if initial_randomize > 0:
+                action = 0  # no op
+            else:
+                initial_randomize -= 1
 
-                action = agent.getAction(state, eps)
+                if t % args.frame_skip == 0:
+                    alpha = t / args.exploration_steps
+                    eps = (1 - alpha) * args.initial_eps + alpha * args.final_eps
+                    eps = max(eps, args.final_eps)
+
+                    action = agent.getAction(state, eps)
 
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
@@ -113,17 +116,17 @@ def train(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--episode', type=int, default=12000)
-    parser.add_argument('--buffer_size', type=int, default=400000)
+    parser.add_argument('--buffer_size', type=int, default=1000000)
     parser.add_argument('--train_freq', type=int, default=4)
-    parser.add_argument('--initial_wait', type=int, default=20000)
+    parser.add_argument('--initial_wait', type=int, default=50000)
     parser.add_argument('--batch', type=int, default=32)
     parser.add_argument('--target_update_freq', type=int, default=10000)
-    parser.add_argument('--lr', type=float, default=0.0003)
+    parser.add_argument('--lr', type=float, default=0.00025)
     parser.add_argument('--frame_skip', type=int, default=4)
-    parser.add_argument('--initial_randomize_max', type=int, default=20)
+    parser.add_argument('--initial_randomize_max', type=int, default=30)
     parser.add_argument('--snapshot_freq', type=int, default=1000)
     parser.add_argument('--initial_eps', type=float, default=1.0)
-    parser.add_argument('--final_eps', type=float, default=0.01)
+    parser.add_argument('--final_eps', type=float, default=0.1)
     parser.add_argument('--exploration_steps', type=float, default=1000000)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--model_path', type=str)
