@@ -82,8 +82,7 @@ def train(args):
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
             nextState = torch.cat([state.narrow(1, 1, 3), utils.preprocess(observation)], 1)
-
-            buffer.push(utils.Step(state, action, reward, nextState))
+            buffer.push(utils.Step(state, action, reward, nextState, done))
             state = nextState
             sum_reward += reward
             t += 1

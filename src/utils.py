@@ -11,6 +11,7 @@ class Step(NamedTuple):
     action: int
     reward: float
     nextState: torch.Tensor
+    done: bool
 
 
 # replay buffer

@@ -28,16 +28,18 @@ class Trainer(object):
         actionBatch = torch.LongTensor([step.action for step in batch])
         rewardBatch = torch.Tensor([step.reward for step in batch])
         nextStateBatch = Variable(torch.cat([step.nextState for step in batch], 0))
+        doneBatch = torch.Tensor([(1 if step.done else 0) for step in batch])
 
         if not config.isLocal:
             stateBatch = stateBatch.cuda()
             actionBatch = actionBatch.cuda()
             rewardBatch = rewardBatch.cuda()
             nextStateBatch = nextStateBatch.cuda()
+            doneBatch = doneBatch.cuda()
 
         # calc values for update model
         qValue = self.Q(stateBatch).gather(1, actionBatch.unsqueeze(1)).squeeze(1)  # Q(s, a)
-        qTarget = rewardBatch + self.QTarget(nextStateBatch).detach().max(1)[0] * self.gamma  # r + γmaxQ(s', a')
+        qTarget = rewardBatch + (1 - doneBatch) * self.QTarget(nextStateBatch).detach().max(1)[0] * self.gamma  # r + γmaxQ(s', a')
 
         L = self.lossFunc(qValue, qTarget)  # loss to equalize Q(s) and r + γmaxQ(s', a')
         self.opt.zero_grad()
