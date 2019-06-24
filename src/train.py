@@ -56,7 +56,7 @@ def train(args):
         observation = env.reset()
         state = torch.cat([utils.preprocess(observation)] * 4, 1)  # initial state
         sum_reward = 0
-        initial_randomize = random.randint(0, args.initial_randomize_max)
+        initial_freeze = random.randint(0, args.initial_freeze_max)
 
         # Exploration loop
         done = False
@@ -74,10 +74,10 @@ def train(args):
                 eps = max(eps, args.final_eps)
 
                 action = agent.getAction(state, eps)
-            
-            if initial_randomize > 0:
+
+            if initial_freeze > 0:
                 action = 0  # no op
-                initial_randomize -= 1
+                initial_freeze -= 1
 
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     parser.add_argument('--target_update_freq', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=0.00025)
     parser.add_argument('--action_repeat', type=int, default=4)
-    parser.add_argument('--initial_randomize_max', type=int, default=30)
+    parser.add_argument('--initial_freeze_max', type=int, default=30)
     parser.add_argument('--snapshot_freq', type=int, default=1000)
     parser.add_argument('--initial_eps', type=float, default=1.0)
     parser.add_argument('--final_eps', type=float, default=0.1)
