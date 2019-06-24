@@ -65,17 +65,18 @@ def train(args):
                 env.render()
 
             # frame skip
+            if t < args.replay_start:
+                action = env.action_space.sample()
+            elif t % args.frame_skip == 0:
+                alpha = t / args.exploration_steps
+                eps = (1 - alpha) * args.initial_eps + alpha * args.final_eps
+                eps = max(eps, args.final_eps)
+
+                action = agent.getAction(state, eps)
+            
             if initial_randomize > 0:
                 action = 0  # no op
-            else:
                 initial_randomize -= 1
-
-                if t % args.frame_skip == 0:
-                    alpha = t / args.exploration_steps
-                    eps = (1 - alpha) * args.initial_eps + alpha * args.final_eps
-                    eps = max(eps, args.final_eps)
-
-                    action = agent.getAction(state, eps)
 
             # take action and calc next state
             observation, reward, done, _ = env.step(action)
@@ -86,8 +87,8 @@ def train(args):
             sum_reward += reward
             t += 1
 
-            # initial waiting
-            if t < args.initial_wait:
+            # replay start
+            if t < args.replay_start:
                 continue
 
             # update model
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     parser.add_argument('--episode', type=int, default=12000)
     parser.add_argument('--buffer_size', type=int, default=1000000)
     parser.add_argument('--train_freq', type=int, default=4)
-    parser.add_argument('--initial_wait', type=int, default=50000)
+    parser.add_argument('--replay_start', type=int, default=50000)
     parser.add_argument('--batch', type=int, default=32)
     parser.add_argument('--target_update_freq', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=0.00025)
